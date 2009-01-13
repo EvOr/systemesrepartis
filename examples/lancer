@@ -1,0 +1,20 @@
+#!/bin/sh
+#	compilation des 2 programmes
+cc -o genere_UDP genere_UDP.c
+cc -o attente attente.c
+
+#	ouvre une fenêtre (xterm) 
+#	execute dans cette fenêtre un processus genere_UDP (-e commande)
+#	en lui donnant en paramètre le nom du système où s'exécute
+#		le processus attente (localhost)
+xterm -title "genere_UDP localhost" -e genere_UDP localhost &
+
+#	ouvre une fenêtre (xterm) 
+#	execute dans cette fenêtre un processus attente (-e commande)
+
+#	on peut taper des lignes dans cette fenêtre (ne pas oublier <Entrée>)
+#	et voir ainsi que le processus les prend en compte (STDIN)
+xterm -title "Attente par select(2)" -e attente &
+
+#	ARRET
+#		taper Control/C dans chaque fenêtre
