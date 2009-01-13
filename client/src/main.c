@@ -6,9 +6,8 @@
 
 #include "ricart_rpc.h"
 
-/** 
- * @brief The main function of the program
- * 
+ //! @brief The main function of the program
+ /** 
  * @param argc The number of arguments entered on the command line
  * @param argv  A tabular containing the arguments entered on the command line
  * 
