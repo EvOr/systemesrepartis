@@ -12,6 +12,7 @@
 #define NUMERO_VERSION 1
 #define REGISTER_NB 1
 #define MAX_NAME_SIZE 8
+
 /*
  * registerrpc(n°Prog, n°Version, n°proc, nom proc, nom param, nom return)
  *
