@@ -6,20 +6,17 @@
 
 #include "ricart_rpc.h"
 
- //! @brief The main function of the program
- /** 
- * @param argc The number of arguments entered on the command line
- * @param argv  A tabular containing the arguments entered on the command line
- * 
- * @return 0 if the program ended correctly, otherwise an errorcode
- */
+//! @brief The main function of the program
+//! @param argc The number of arguments entered on the command line
+//! @param argv  A tabular containing the arguments entered on the command line
+//! @return 0 if the program ended correctly, otherwise an errorcode
 int main(int argc, char** argv){
     struct couple me,ret;
     int managed;
     /* Truc pour le socket */
-    int s_ecoute, lg_app,nb_client,i=0;
-    struct sockaddr_in adr;
-    char mes[1024];
+    int s_ecoute, lg_app,nb_client,i=0, recu_udp;
+    struct sockaddr_in adr, appelant;
+    char mes[1024], recus[1024];
     /* Fin truc pour le socket */
     if(argc<1 && strlen(argv[1]) < MAX_NAME_SIZE) {
 	fprintf(stderr, "Usage : first argument must be the instance name	and 8 characters maximum.");
@@ -41,7 +38,6 @@ int main(int argc, char** argv){
     }
     /* Fin initialisation du socket */
 
-
     managed=callrpc("localhost", (long) NUMERO_PROG, (long) NUMERO_VERSION, (long) REGISTER_NB,
 	    (xdrproc_t) xdr_couple, (char*) &me, (xdrproc_t) xdr_couple, (char*) &ret);
 
@@ -56,8 +52,8 @@ int main(int argc, char** argv){
     }
     /* Socket attend de recevoir */
     lg_app = sizeof(struct sockaddr_in);
-    recus =recvfrom(s_ecoute, mes, sizeof(mes), 0, (struct sockadd *) &appelant, &lg_app);
-    if(recu <=0){
+    recu_udp =recvfrom(s_ecoute, mes, sizeof(mes), 0, (struct sockaddr *)& appelant, (socklen_t*) &lg_app);
+    if(recu_udp <=0){
 	fprintf(stderr, "Socket did not receive what it was waiting for.");
 	exit(1);
     }else{
@@ -65,7 +61,6 @@ int main(int argc, char** argv){
 	nb_client=atoi(mes);
 	/* Parser une chaine qui contient tout le bordel HostName + PortNumber */
     }
-
 
     /* Fin attente du socket */
     /* if (bind(s_ecoute,(struct sockaddr *) &adr, sizeof (struct sockaddr_in)) !=0)
@@ -79,5 +74,4 @@ int main(int argc, char** argv){
 
     return 0;
 }
-
 

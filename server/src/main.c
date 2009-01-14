@@ -2,6 +2,7 @@
 #include <rpc/types.h>
 #include <rpc/xdr.h>
 #include <rpc/rpc.h>
+#include <signal.h>
 #include <stdio.h>
 
 #include "ricart_rpc.h"
@@ -14,22 +15,31 @@ int nb_clients = 0;
 //! @brief Our clients' information
 request_t clients[MAX_CLIENTS];
 
+void clean_terminus(void)
+{
+    printf("Terminate!!!\n");
+   svc_unregister(NUMERO_PROG, NUMERO_VERSION);
+    exit(1);
+}
+
 //! @brief main function
 //! @param argc The number of arguments entered on the command line
 //! @param argv A tabular of the arguments entered on the command line
 //! @return An error code
 int main(int argc, char** argv){
-   char success;	// rpc registered successfull?
+   char failed;	// rpc registered successfull?
+   signal(2, clean_terminus);
 
    printf("Registering rpc server...\n");
-   success = registerrpc(NUMERO_PROG, NUMERO_VERSION, REGISTER_NB, register_on_server, xdr_request, xdr_request);
-   if(!success)
+   failed = registerrpc(NUMERO_PROG, NUMERO_VERSION, REGISTER_NB, register_on_server, xdr_request, xdr_request);
+   if(failed)
    {  /* Registering failed */
       fprintf(stderr, "Failed to register rpc server\n");
       exit(1);
    }
    svc_run();
 
+   svc_unregister(NUMERO_PROG, NUMERO_VERSION);
    return 0;
 }
 

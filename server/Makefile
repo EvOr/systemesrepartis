@@ -12,7 +12,8 @@ SRCDIR = ./src
 INCDIR = ./include
 OBJDIR = ./obj
 
-CPP = gcc -Wall -ansi -pedantic
+CPP = gcc -Wall 
+# -ansi -pedantic
 LDLIBS = 
 CFLAGS += -I$(INCDIR)/
 
