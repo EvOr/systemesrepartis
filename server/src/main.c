@@ -14,13 +14,17 @@
 
 #include "ricart_rpc.h"
 
-#define MAX_CLIENTS 3
+
+/* Some prototypes */
 char* register_on_server(request_t*);
+
 
 //! @brief How many clients we are connected to
 int nb_clients = 0;
 //! @brief Our clients' information
+#define MAX_CLIENTS 3
 request_t clients[MAX_CLIENTS];
+
 
 //! @brief A function that finish cleaning in the case the program is badly interrupted
 void clean_terminus()
@@ -48,9 +52,13 @@ int main(int argc, char** argv){
 	fprintf(stderr, "Failed to register rpc server\n");
 	exit(1);
     }
+
+    /* Running RPC server */
     svc_run();
 
+    /* Unregistering RPC server */
     svc_unregister(NUMERO_PROG, NUMERO_VERSION);
+
     return 0;
 }
 

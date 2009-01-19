@@ -1,3 +1,10 @@
+/** 
+ * @file main.c
+ * @brief The client implementation for the Ricart and Agrawala algorithm
+ * @author Julien Dessaux & Jan Villeminot
+ * @date 2009-01-17
+ */
+
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
