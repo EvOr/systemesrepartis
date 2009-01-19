@@ -20,16 +20,31 @@
 
 #define MAX_NAME_SIZE 8
 
-/*
- * registerrpc(n°Prog, n°Version, n°proc, name proc, name param, name return)
- */
-//! @brief 
+//! @brief The data structure for a request
 typedef struct request{
+    //! @brief A tabular for the client's name
     char name[MAX_NAME_SIZE + 1];
+    //! @brief The UDP port the client is binded on
     int port;
 } request_t;
 
-int xdr_request();
+//! @brief The function that will handle a request data structure
+//! @param xdrp The XDR pointer
+//! @param p A pointer on the data structure to handle
+int xdr_request(XDR *xdrp, request_t *p);
 
+
+//! @brief The data structure for a response
+typedef struct response{
+    //! @brief The number of clients that are ready, or 0 if an error occured
+    int nb_clients;
+    //! @brief The port provided by the client, or an error code (100: too many clients, 200: port number error)
+    int port;
+} response_t;
+
+//! @brief The function that will handle a response data structure
+//! @param xdrp The XDR pointer
+//! @param p A pointer on the data structure to handle
+int xdr_response(XDR *xdrp, response_t *p);
 #endif
 

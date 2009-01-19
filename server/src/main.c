@@ -5,19 +5,24 @@
  * @date 2009-01-17
  */
 
+#include <netdb.h>
+#include <netinet/in.h>
 #include <rpc/types.h>
 #include <rpc/xdr.h>
 #include <rpc/rpc.h>
 #include <rpc/svc.h>
 #include <signal.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "ricart_rpc.h"
 
 
 /* Some prototypes */
 char* register_on_server(request_t*);
-
+void advertise_all();
 
 //! @brief How many clients we are connected to
 int nb_clients = 0;
@@ -38,7 +43,8 @@ void clean_terminus()
 //! @param argc The number of arguments entered on the command line
 //! @param argv A tabular of the arguments entered on the command line
 //! @return An error code
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
     char failed;	// rpc registered successfull?
 
     /* Arming SIG_TERM signal */
@@ -65,32 +71,67 @@ int main(int argc, char** argv){
 //! @brief rpc server core function
 //! @param *p The argument received from the client
 //! @return The result of the argument process
-char* register_on_server(request_t *p){
-    static request_t res;	// A structure that handle the result
+char* register_on_server(request_t *p)
+{
+    static response_t response;	// A structure that handle the result
 
-    if(nb_clients < MAX_CLIENTS)
-    {  /* We can handle more clients */
-	if(strlen(p->name) <= MAX_NAME_SIZE && p->port > 0 && p-> port < 65535)
-	{  /* We received a valid connection attempt */
+    if(strlen(p->name) <= MAX_NAME_SIZE && p->port > 0 && p-> port < 65535)
+    {  /* We received a valid connection attempt */
+	if(nb_clients < MAX_CLIENTS)
+	{  /* We can handle more clients */
 	    printf("Received advertisement from client \"%s\" at port %d.\n", p->name, p->port);
 	    /* Storing information received from client */
 	    strcpy(clients[nb_clients].name, p->name);
-	    clients[nb_clients].port=p->port;
+	    clients[nb_clients].port = p->port;
 	    /* compiling result */
-	    strcpy(res.name, p->name);
-	    res.port=0;
-	    ++nb_clients;
+	    response.nb_clients = ++nb_clients;
+	    response.port = 0;
+	    /* was it the last client we were waiting for? */
+	    if(nb_clients == MAX_CLIENTS)
+		advertise_all();
 	}
 	else
-	{  /* We received an invalid connection attempt */
-	    fprintf(stderr, "Invalid arguments received from client \"%s\" at port %d.\n", p->name, p->port);
+	{  /* We can't take any more client */
+	    fprintf(stderr, "Cannot handle any more client : \"%s\" at port %d.\n", p->name, p->port);
+	    response.nb_clients = 0;
+	    response.port = 100;
 	}
     }
     else
-    {  /* We can't take any more client */
-	res.port=100;
-	res.name[0]='0';
+    {  /* We received an invalid connection attempt */
+	fprintf(stderr, "Invalid arguments received from client \"%s\" at port %d.\n", p->name, p->port);
+	response.nb_clients = 0;
+	response.port = 200;
     }
-    return ((char*)&res); 
+    return ((char*)&response); 
+}
+
+//! @brief Advertise all clients on their UDP port that they can begin their stuff
+void advertise_all()
+{
+    int fd_socket;	// The socket's file descriptor
+    struct sockaddr_in adr;	// The destination
+    short tab[MAX_CLIENTS + 1];	// A buffer for the stuff we need to send
+    int i;	// counter
+
+    /* Preparation de la socket de communication */
+    fd_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    /* Initialisation des champs de la structure */
+    adr.sin_family=AF_INET;
+    adr.sin_addr.s_addr=INADDR_ANY;
+
+    /* Populating tab */
+    for(i = 0; i < MAX_CLIENTS; ++i)
+	tab[i] = clients[i].port;
+    tab[MAX_CLIENTS] = 0;
+    /* sending the information to every client */
+    for(i = 0; i < MAX_CLIENTS; ++i)
+    {
+    	adr.sin_port=htons(clients[i].port);
+	sendto(fd_socket, (char*) tab, (MAX_CLIENTS + 1) * sizeof(short), 0, (struct sockaddr *) &adr, sizeof(adr));
+    }
+
+    /* closing socket */
+    shutdown(fd_socket, SHUT_RDWR);
 }
 
