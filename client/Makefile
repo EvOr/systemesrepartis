@@ -6,7 +6,7 @@
 VERSION = DEBUG
 
 TGT = client
-SRC = main.c ricart_rpc.c
+SRC = agrawala.c main.c ricart_rpc.c
 
 SRCDIR = ./src
 INCDIR = ./include
