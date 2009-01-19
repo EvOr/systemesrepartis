@@ -39,6 +39,7 @@ void clean_terminus()
     exit(1);
 }
 
+
 //! @brief main function
 //! @param argc The number of arguments entered on the command line
 //! @param argv A tabular of the arguments entered on the command line
@@ -68,12 +69,13 @@ int main(int argc, char** argv)
     return 0;
 }
 
+
 //! @brief rpc server core function
 //! @param *p The argument received from the client
 //! @return The result of the argument process
 char* register_on_server(request_t *p)
 {
-    static response_t response;	// A structure that handle the result
+    static response_t response;	// A structure that handle the response
 
     if(strlen(p->name) <= MAX_NAME_SIZE && p->port > 0 && p-> port < 65535)
     {  /* We received a valid connection attempt */
@@ -91,7 +93,7 @@ char* register_on_server(request_t *p)
 		advertise_all();
 	}
 	else
-	{  /* We can't take any more client */
+	{  /* We can't handle any more client */
 	    fprintf(stderr, "Cannot handle any more client : \"%s\" at port %d.\n", p->name, p->port);
 	    response.nb_clients = 0;
 	    response.port = 100;
@@ -105,6 +107,7 @@ char* register_on_server(request_t *p)
     }
     return ((char*)&response); 
 }
+
 
 //! @brief Advertise all clients on their UDP port that they can begin their stuff
 void advertise_all()
@@ -127,7 +130,7 @@ void advertise_all()
     /* sending the information to every client */
     for(i = 0; i < MAX_CLIENTS; ++i)
     {
-    	adr.sin_port=htons(clients[i].port);
+	adr.sin_port=htons(clients[i].port);
 	sendto(fd_socket, (char*) tab, (MAX_CLIENTS + 1) * sizeof(short), 0, (struct sockaddr *) &adr, sizeof(adr));
     }
 
