@@ -8,8 +8,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <rpc/types.h>
-#include <rpc/xdr.h>
-#include <rpc/rpc.h>
 #include <rpc/svc.h>
 #include <signal.h>
 #include <sys/socket.h>
@@ -87,7 +85,7 @@ char* register_on_server(request_t *p)
 	    clients[nb_clients].port = p->port;
 	    /* compiling result */
 	    response.nb_clients = ++nb_clients;
-	    response.port = 0;
+	    response.port = p->port;
 	    /* was it the last client we were waiting for? */
 	    if(nb_clients == MAX_CLIENTS)
 		advertise_all();
@@ -105,6 +103,7 @@ char* register_on_server(request_t *p)
 	response.nb_clients = 0;
 	response.port = 200;
     }
+
     return ((char*)&response); 
 }
 

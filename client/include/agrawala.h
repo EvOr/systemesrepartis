@@ -8,7 +8,7 @@
 #ifndef _AGRAWALA_H_
 #define _AGRAWALA_H_
 
-int agrawala_init();
+void agrawala_init(const int port);
 
 void agrawala_run();
 
