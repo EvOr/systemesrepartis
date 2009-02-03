@@ -64,8 +64,9 @@ void agrawala_enter_critical_section()
 //! @brief The agrawala algorithm main loop
 void agrawala_main_loop()
 {
+    int i;
     /* Testing */
-    for(i=0; i<nb_friends; ++i)
+    for(i=0; i<nb_clients; ++i)
 	printf("%d\t", ports[i]);
     printf("\n");
 }
@@ -78,16 +79,15 @@ void agrawala_run()
     char buffer[1024];	// A buffer to handle the socket response
     int received_bytes;	// The number of bytes received from the socket
     int struct_size;	// A int to retrieve the structure size from the recvfrom function
-    int nb_friends, i;
 
     /* Retrieving the results from the server */
     received_bytes = recvfrom(s_ecoute, buffer, sizeof(buffer), 0, (struct sockaddr *) &caller, (socklen_t*)&struct_size);
-    ports = (short*) malloc(nb_friends * sizeof(short));
+    ports = (short*) malloc(nb_clients * sizeof(short));
+    nb_clients = received_bytes / 2 - 1;
     if(!ports){
 	fprintf(stderr, "\ndynamic memory allocation failed\n");
 	exit(1);
     }
-    nb_clients = received_bytes / 2 - 1;
     strncpy((char*) ports, buffer, nb_clients * 2);
 
     /* Entering the agrawala main loop */
