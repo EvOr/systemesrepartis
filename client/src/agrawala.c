@@ -24,6 +24,11 @@ short * ports = NULL;
 //! @brief The total number of clients
 int nb_clients = 0;
 
+//! @brief Clock of the client
+int clock = 0;
+
+//! @brief numero du client
+int client_number;
 
 //! @brief Init the agrawala algorithm processor
 //! @param port The port we want to bind the socket on
@@ -48,6 +53,11 @@ void agrawala_init(const int port)
 
 void agrawala_send_request()
 {
+   message_t msg;
+   msg.type = REQ;
+   msg.clock=++clock;
+   msg.client=client_number;
+
 }
 
 
@@ -60,6 +70,12 @@ void agrawala_enter_critical_section()
 {
 }
 
+//! @brief Envoie un message a tout les clients
+//! @param message a envoyer
+void broadcast(message_t message)
+{
+  
+}
 
 //! @brief The agrawala algorithm main loop
 void agrawala_main_loop()

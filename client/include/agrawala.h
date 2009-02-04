@@ -7,6 +7,13 @@
 
 #ifndef _AGRAWALA_H_
 #define _AGRAWALA_H_
+#define ACK 1
+#define REQ 0 
+typedef struct message{
+   int type;
+   int clock;
+   int client;
+}message_t;
 
 void agrawala_init(const int port);
 
