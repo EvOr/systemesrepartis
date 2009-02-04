@@ -18,24 +18,20 @@
 
 //! @brief The client's socket file descriptor
 int s_ecoute = -1;
-
 //! @brief The list of clients
 request_t *clients = 0;
-
 //! @brief The total number of clients
 short nb_clients = 0;
-
 //! @brief Clock of the client
 int clock = 0;
-
 //! @brief numero du client
-int client_number;
+int client_id;
 
 /* Some prototypes */
 void agrawala_main_loop();
-void send_message(request_t client, message_t msg);
-void broadcast(message_t message);
 void agrawala_send_request();
+void broadcast(message_t* msg);
+void send_message(request_t client, message_t* msg);
 
 
 // --- Public functions ------------------------------------------------------
@@ -55,6 +51,8 @@ void agrawala_init(const int port)
 	fprintf(stderr, "Socket could not be initialized");
 	exit(1);
     }
+
+    client_id = port;
 }
 
 
@@ -85,7 +83,7 @@ void agrawala_close()
     if(s_ecoute != -1)
 	shutdown(s_ecoute, SHUT_RDWR);
     if(clients)
-        free(clients);
+	free(clients);
 }
 
 
@@ -102,18 +100,23 @@ void agrawala_main_loop()
 
 
 void coucou(){
-   printf("coucou\n");
-   fflush(stdout);
+    printf("coucou\n");
+    fflush(stdout);
 }
 
 
 void agrawala_send_request()
 {
-   message_t msg;
-   msg.type = REQ;
-   msg.clock=++clock;
-   msg.client=client_number;
-   broadcast(msg);
+    //! @brief The message to send
+    message_t msg;
+
+    /* Populating the structure */
+    msg.type = REQ;
+    msg.clock = ++clock;
+    msg.client = client_id;
+
+    /* Then we broadcast the message */
+    broadcast(&msg);
 }
 
 
@@ -126,20 +129,22 @@ void agrawala_enter_critical_section()
 {
 }
 
+
 //! @brief Envoie un message a tout les clients
-//! @param message a envoyer
-void broadcast(message_t message)
+//! @param message Le message à envoyer
+void broadcast(message_t* msg)
 {
-   int i=0;
-   for(;i<nb_clients;i++){
-      send_message(clients[i],message);
-   } 
+    int i=0;
+    for(;i<nb_clients;i++){
+	send_message(clients[i], msg);
+    } 
 }
+
 
 //! @brief Envoie un message a un client
 //! @param client a qui envoyer
 //! @param message a envoyer
-void send_message(request_t client, message_t msg){
+void send_message(request_t client, message_t* msg){
     int fd_socket;	// The socket's file descriptor
     struct sockaddr_in adr;	// The destination
 
@@ -149,7 +154,7 @@ void send_message(request_t client, message_t msg){
     adr.sin_family=AF_INET;
     adr.sin_addr.s_addr=INADDR_ANY;
     adr.sin_port=htons(client.port);
-   
-    sendto(fd_socket, (char*) &msg, sizeof(message_t), 0, (struct sockaddr *) &adr, sizeof(adr));
+
+    sendto(fd_socket, (char*) msg, sizeof(message_t), 0, (struct sockaddr *) &adr, sizeof(adr));
 }
 
