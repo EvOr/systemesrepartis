@@ -83,7 +83,6 @@ void agrawala_run()
 
     /* Retrieving the results from the server */
     received_bytes = recvfrom(s_ecoute, buffer, sizeof(buffer), 0, (struct sockaddr *) &caller, (socklen_t*)&struct_size);
-//    ports = (short*) malloc(nb_clients * sizeof(short));
     memcpy((char *) &nb_clients, buffer, sizeof(short));
     clients = (request_t*) malloc(nb_clients * sizeof(request_t));
     if(!clients){

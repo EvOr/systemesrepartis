@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 
     /* Registering RPC server */
     printf("Registering RPC server...\n");
-    failed = registerrpc(NUMERO_PROG, NUMERO_VERSION, REGISTER_NB, register_on_server, xdr_request, xdr_request);
+    failed = registerrpc(NUMERO_PROG, NUMERO_VERSION, REGISTER_NB, register_on_server, xdr_request, xdr_response);
     if(failed)
     {  /* Registering failed */
 	fprintf(stderr, "Failed to register rpc server\n");
@@ -104,7 +104,6 @@ char* register_on_server(request_t *p)
 	response.port = 200;
     }
 
-    printf("%d %d\n", response.nb_clients, response.port);
     return ((char*)&response); 
 }
 

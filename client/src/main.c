@@ -58,7 +58,6 @@ int main(int argc, char** argv){
     }
 
     /* Handling response */
-    printf("%d %d\n", response.nb_clients, response.port);
     if(response.nb_clients == 0){
 	if(response.port == 100)
 	    fprintf(stderr, "There are too many clients connected to the server.\n");
