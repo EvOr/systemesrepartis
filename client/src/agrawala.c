@@ -30,6 +30,8 @@ int clock = 0;
 
 //! @brief numero du client
 int client_number;
+void send_message(request_t client, message_t msg);
+void broadcast(message_t message);
 
 //! @brief Init the agrawala algorithm processor
 //! @param port The port we want to bind the socket on
@@ -50,7 +52,9 @@ void agrawala_init(const int port)
 	exit(1);
     }
 }
-
+void coucou(){
+   printf("coucou\n");
+}
 
 void agrawala_send_request()
 {
@@ -58,7 +62,7 @@ void agrawala_send_request()
    msg.type = REQ;
    msg.clock=++clock;
    msg.client=client_number;
-
+   broadcast(msg);
 }
 
 
@@ -75,7 +79,11 @@ void agrawala_enter_critical_section()
 //! @param message a envoyer
 void broadcast(message_t message)
 {
-  
+   int i=0;
+   for(;i<nb_clients;i++){
+      coucou();
+      send_message(clients[i],message);
+   } 
 }
 
 //! @brief The agrawala algorithm main loop
@@ -86,6 +94,7 @@ void agrawala_main_loop()
     for(i=0; i<nb_clients; ++i)
 	printf("%s : %d\n", clients[i].name, clients[i].port);
     printf("\n");
+    agrawala_send_request();
 }
 
 
@@ -122,3 +131,26 @@ void agrawala_close()
         free(clients);
 }
 
+//! @brief Envoie un message a un client
+//! @param client a qui envoyer
+//! @param message a envoyer
+void send_message(request_t client, message_t msg){
+    int fd_socket;	// The socket's file descriptor
+    struct sockaddr_in adr;	// The destination
+    char buff[sizeof(message_t)];	// A buffer for the stuff we need to send
+coucou();
+    /* Preparation de la socket de communication */
+    fd_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    /* Initialisation des champs de la structure */
+    adr.sin_family=AF_INET;
+    adr.sin_addr.s_addr=INADDR_ANY;
+    adr.sin_port=htons(client.port);
+ coucou();
+   
+//    memcpy(buff, (char*) &msg, sizeof(message_t));
+  coucou();
+ 
+    sendto(fd_socket, (char*) &msg, sizeof(message_t), 0, (struct sockaddr *) &adr, sizeof(adr));
+coucou();
+
+}
