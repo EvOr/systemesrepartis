@@ -8,10 +8,14 @@
 #ifndef _AGRAWALA_H_
 #define _AGRAWALA_H_
 
+//! @brief Init the agrawala algorithm processor
+//! @param port The port we want to bind the socket on
 void agrawala_init(const int port);
 
+//! @brief Runs the agrawala algorithm
 void agrawala_run();
 
+//! @brief Properly terminate the agrawala processing
 void agrawala_close();
 
 #endif

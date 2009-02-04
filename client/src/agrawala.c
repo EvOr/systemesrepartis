@@ -26,8 +26,7 @@ request_t *clients = 0;
 short nb_clients = 0;
 
 
-//! @brief Init the agrawala algorithm processor
-//! @param port The port we want to bind the socket on
+// --- Public functions ------------------------------------------------------
 void agrawala_init(const int port)
 {
     struct sockaddr_in adr;
@@ -47,33 +46,6 @@ void agrawala_init(const int port)
 }
 
 
-void agrawala_send_request()
-{
-}
-
-
-void agrawala_send_ack(short port)
-{
-}
-
-
-void agrawala_enter_critical_section()
-{
-}
-
-
-//! @brief The agrawala algorithm main loop
-void agrawala_main_loop()
-{
-    int i;
-    /* Testing */
-    for(i=0; i<nb_clients; ++i)
-	printf("%s : %d\n", clients[i].name, clients[i].port);
-    printf("\n");
-}
-
-
-//! @brief Runs the agrawala algorithm
 void agrawala_run()
 {
     struct sockaddr_in caller;	// A structure to handle the caller parameters
@@ -96,12 +68,38 @@ void agrawala_run()
 }
 
 
-//! @brief Properly terminate the agrawala processing
 void agrawala_close()
 {
     if(s_ecoute != -1)
 	shutdown(s_ecoute, SHUT_RDWR);
     if(clients)
         free(clients);
+}
+
+
+// --- Private functions -----------------------------------------------------
+//! @brief The agrawala algorithm main loop
+void agrawala_main_loop()
+{
+    int i;
+    /* Testing */
+    for(i=0; i<nb_clients; ++i)
+	printf("%s : %d\n", clients[i].name, clients[i].port);
+    printf("\n");
+}
+
+
+void agrawala_send_request()
+{
+}
+
+
+void agrawala_send_ack(short port)
+{
+}
+
+
+void agrawala_enter_critical_section()
+{
 }
 
