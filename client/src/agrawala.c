@@ -13,16 +13,17 @@
 #include <sys/socket.h>
 
 #include "agrawala.h"
+#include "ricart_rpc.h"
 
 
 //! @brief The client's socket file descriptor
 int s_ecoute = -1;
 
 //! @brief The list of clients
-short * ports = NULL;
+request_t *clients = 0;
 
 //! @brief The total number of clients
-int nb_clients = 0;
+short nb_clients = 0;
 
 //! @brief Clock of the client
 int clock = 0;
@@ -83,7 +84,7 @@ void agrawala_main_loop()
     int i;
     /* Testing */
     for(i=0; i<nb_clients; ++i)
-	printf("%d\t", ports[i]);
+	printf("%s : %d\n", clients[i].name, clients[i].port);
     printf("\n");
 }
 
@@ -98,13 +99,14 @@ void agrawala_run()
 
     /* Retrieving the results from the server */
     received_bytes = recvfrom(s_ecoute, buffer, sizeof(buffer), 0, (struct sockaddr *) &caller, (socklen_t*)&struct_size);
-    ports = (short*) malloc(nb_clients * sizeof(short));
-    nb_clients = received_bytes / 2 - 1;
-    if(!ports){
+//    ports = (short*) malloc(nb_clients * sizeof(short));
+    memcpy((char *) &nb_clients, buffer, sizeof(short));
+    clients = (request_t*) malloc(nb_clients * sizeof(request_t));
+    if(!clients){
 	fprintf(stderr, "\ndynamic memory allocation failed\n");
 	exit(1);
     }
-    strncpy((char*) ports, buffer, nb_clients * 2);
+    memcpy((char*) clients, buffer + sizeof(short), nb_clients * sizeof(request_t));
 
     /* Entering the agrawala main loop */
     agrawala_main_loop();
@@ -116,7 +118,7 @@ void agrawala_close()
 {
     if(s_ecoute != -1)
 	shutdown(s_ecoute, SHUT_RDWR);
-    if(ports)
-        free(ports);
+    if(clients)
+        free(clients);
 }
 

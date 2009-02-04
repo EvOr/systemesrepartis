@@ -23,7 +23,7 @@ char* register_on_server(request_t*);
 void advertise_all();
 
 //! @brief How many clients we are connected to
-int nb_clients = 0;
+short nb_clients = 0;
 //! @brief Our clients' information
 #define MAX_CLIENTS 3
 request_t clients[MAX_CLIENTS];
@@ -104,6 +104,7 @@ char* register_on_server(request_t *p)
 	response.port = 200;
     }
 
+    printf("%d %d\n", response.nb_clients, response.port);
     return ((char*)&response); 
 }
 
@@ -113,7 +114,7 @@ void advertise_all()
 {
     int fd_socket;	// The socket's file descriptor
     struct sockaddr_in adr;	// The destination
-    short tab[MAX_CLIENTS + 1];	// A buffer for the stuff we need to send
+    char buff[sizeof(int) + MAX_CLIENTS * sizeof(request_t)];	// A buffer for the stuff we need to send
     int i;	// counter
 
     /* Preparation de la socket de communication */
@@ -123,14 +124,13 @@ void advertise_all()
     adr.sin_addr.s_addr=INADDR_ANY;
 
     /* Populating tab */
-    for(i = 0; i < MAX_CLIENTS; ++i)
-	tab[i] = clients[i].port;
-    tab[MAX_CLIENTS] = 0;
+    memcpy(buff, (char*) &nb_clients, sizeof(short));
+    memcpy(buff + sizeof(short), (char*) clients, sizeof(clients));
     /* sending the information to every client */
     for(i = 0; i < MAX_CLIENTS; ++i)
     {
 	adr.sin_port=htons(clients[i].port);
-	sendto(fd_socket, (char*) tab, (MAX_CLIENTS + 1) * sizeof(short), 0, (struct sockaddr *) &adr, sizeof(adr));
+	sendto(fd_socket, (char*) buff, sizeof(buff), 0, (struct sockaddr *) &adr, sizeof(adr));
     }
 
     /* closing socket */
