@@ -25,6 +25,18 @@ request_t *clients = 0;
 //! @brief The total number of clients
 short nb_clients = 0;
 
+//! @brief Clock of the client
+int clock = 0;
+
+//! @brief numero du client
+int client_number;
+
+/* Some prototypes */
+void agrawala_main_loop();
+void send_message(request_t client, message_t msg);
+void broadcast(message_t message);
+void agrawala_send_request();
+
 
 // --- Public functions ------------------------------------------------------
 void agrawala_init(const int port)
@@ -85,12 +97,23 @@ void agrawala_main_loop()
     /* Testing */
     for(i=0; i<nb_clients; ++i)
 	printf("%s : %d\n", clients[i].name, clients[i].port);
-    printf("\n");
+    agrawala_send_request();
+}
+
+
+void coucou(){
+   printf("coucou\n");
+   fflush(stdout);
 }
 
 
 void agrawala_send_request()
 {
+   message_t msg;
+   msg.type = REQ;
+   msg.clock=++clock;
+   msg.client=client_number;
+   broadcast(msg);
 }
 
 
@@ -101,5 +124,32 @@ void agrawala_send_ack(short port)
 
 void agrawala_enter_critical_section()
 {
+}
+
+//! @brief Envoie un message a tout les clients
+//! @param message a envoyer
+void broadcast(message_t message)
+{
+   int i=0;
+   for(;i<nb_clients;i++){
+      send_message(clients[i],message);
+   } 
+}
+
+//! @brief Envoie un message a un client
+//! @param client a qui envoyer
+//! @param message a envoyer
+void send_message(request_t client, message_t msg){
+    int fd_socket;	// The socket's file descriptor
+    struct sockaddr_in adr;	// The destination
+
+    /* Preparation de la socket de communication */
+    fd_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    /* Initialisation des champs de la structure */
+    adr.sin_family=AF_INET;
+    adr.sin_addr.s_addr=INADDR_ANY;
+    adr.sin_port=htons(client.port);
+   
+    sendto(fd_socket, (char*) &msg, sizeof(message_t), 0, (struct sockaddr *) &adr, sizeof(adr));
 }
 

@@ -8,6 +8,19 @@
 #ifndef _AGRAWALA_H_
 #define _AGRAWALA_H_
 
+#define ACK 1
+#define REQ 0 
+
+//! @brief An agrawala message
+typedef struct message{
+    //! @brief the type of the message
+    int type;
+    //! @brief The clock's value when the message is sent
+    int clock;
+    //! @brief The client id
+    int client;
+} message_t;
+
 //! @brief Init the agrawala algorithm processor
 //! @param port The port we want to bind the socket on
 void agrawala_init(const int port);
