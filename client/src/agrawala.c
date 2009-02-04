@@ -31,7 +31,7 @@ int client_id;
 void agrawala_main_loop();
 void agrawala_send_request();
 void broadcast(message_t* msg);
-void send_message(request_t client, message_t* msg);
+void send_message(short client_id, message_t* msg);
 
 
 // --- Public functions ------------------------------------------------------
@@ -113,15 +113,25 @@ void agrawala_send_request()
     /* Populating the structure */
     msg.type = REQ;
     msg.clock = ++clock;
-    msg.client = client_id;
+    msg.client_id = client_id;
 
     /* Then we broadcast the message */
     broadcast(&msg);
 }
 
 
-void agrawala_send_ack(short port)
+void agrawala_send_ack(short client_id)
 {
+    //! @brief The message to send
+    message_t msg;
+
+    /* Populating the structure */
+    msg.type = ACK;
+    msg.clock = ++clock;
+    msg.client_id = client_id;
+
+    /* Then we broadcast the message */
+    send_message(client_id, &msg);
 }
 
 
@@ -136,7 +146,7 @@ void broadcast(message_t* msg)
 {
     int i=0;
     for(;i<nb_clients;i++){
-	send_message(clients[i], msg);
+	send_message(clients[i].port, msg);
     } 
 }
 
@@ -144,7 +154,7 @@ void broadcast(message_t* msg)
 //! @brief Envoie un message a un client
 //! @param client a qui envoyer
 //! @param message a envoyer
-void send_message(request_t client, message_t* msg){
+void send_message(short client_id, message_t* msg){
     int fd_socket;	// The socket's file descriptor
     struct sockaddr_in adr;	// The destination
 
@@ -153,7 +163,7 @@ void send_message(request_t client, message_t* msg){
     /* Initialisation des champs de la structure */
     adr.sin_family=AF_INET;
     adr.sin_addr.s_addr=INADDR_ANY;
-    adr.sin_port=htons(client.port);
+    adr.sin_port=htons(client_id);
 
     sendto(fd_socket, (char*) msg, sizeof(message_t), 0, (struct sockaddr *) &adr, sizeof(adr));
 }

@@ -18,7 +18,7 @@ typedef struct message{
     //! @brief The clock's value when the message is sent
     int clock;
     //! @brief The client id
-    int client;
+    short client_id;
 } message_t;
 
 //! @brief Init the agrawala algorithm processor
