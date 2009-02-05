@@ -51,7 +51,7 @@ message_t *messages = 0;
 //! @brief The file descriptor set for multiplexing IOs
 fd_set rfsd;
 //! @brief A queue for ack messages
-message_t *queue = 0;
+int *queue = 0;
 //! @brief The number of messages in queue
 int nb_messages_in_queue = 0;
 
@@ -211,7 +211,7 @@ void agrawala_init_algo()
     }
 
     /* Preparing the message queue */
-    queue = (message_t*) malloc(nb_clients * sizeof(message_t));
+    queue = (int*) malloc(nb_clients * sizeof(int));
 
     /* Find our index in the clients list */
     for(i=0; i<nb_clients; ++i){
@@ -242,7 +242,6 @@ void agrawala_handle_packet()
     int struct_size;	// A int to retrieve the structure size from the recvfrom function
     message_t* him;	// the message we received
     message_t* me = &(messages[client_index]);	// our last message
-    message_t response;	// our response message
 
     /* Retrieving the results from the sender */
     received_bytes = recvfrom(s_ecoute, buffer, sizeof(buffer), 0, (struct sockaddr *) &caller, (socklen_t*)&struct_size);
@@ -254,11 +253,8 @@ void agrawala_handle_packet()
     if(him->client_id == client_index){
 	/* This message is from ourself, so we are fine and we just check if we can enter the critical section */
 	if(him->type == REQ){
-	    response.type = ACK;
-	    response.clock = 0;	// the clock will be set when flushing the queue
-	    response.client_id = client_index;
-	    printf("--- Stacking message : %s(%d, %d)\n", (response.type == REQ ? "Req": "Ack"), response.clock, response.client_id + 1);
-	    memcpy(&(queue[nb_messages_in_queue++]), &response, sizeof(message_t));
+	    printf("--- Stacking Ack message for client %d\n", him->client_id + 1);
+	    queue[nb_messages_in_queue++] = him->client_id;
 	}
 	agrawala_enter_critical_section();
     }
@@ -275,11 +271,8 @@ void agrawala_handle_packet()
 		/* we have also sent a request */
 		if(me->clock < him->clock || (me->clock == him->clock && me->client_id < him->client_id)){
 		    /* our request precedes, we add the ack to the queue and we check if we can enter the critical section */
-		    response.type = ACK;
-		    response.clock = 0;	// the clock will be set when flushing the queue
-		    response.client_id = client_index;
-		    printf("--- Stacking message : %s(%d, %d)\n", (response.type == REQ ? "Req": "Ack"), response.clock, response.client_id + 1);
-		    memcpy(&(queue[nb_messages_in_queue++]), &response, sizeof(message_t));
+	            printf("--- Stacking Ack message for client %d\n", him->client_id + 1);
+		    queue[nb_messages_in_queue++] = him->client_id;
 		}
 		else{
 		    /* our request does not precede, so we ack */
@@ -336,7 +329,6 @@ void agrawala_send_ack(short client_id)
 void agrawala_enter_critical_section()
 {
     int min_index = 0;	// the message with the minimal clock
-    message_t *msg;	// a message to send
     int i;	// counter
 
     /* First of all, we determine if we are supposed to enter critical section */
@@ -348,6 +340,7 @@ void agrawala_enter_critical_section()
     /* Then we deal with it */
     if(messages[client_index].type == REQ && min_index == client_index){
 	printf("Entering critical section.\n");
+	/* We print one . every second */
 	for(i=0; i < 10; ++i){
 	    sleep(1);
 	    printf(".");
@@ -358,9 +351,8 @@ void agrawala_enter_critical_section()
 	messages[client_index].type = ACK;
 
 	/* Flushing the message queue */
-	for(i=0; i <= nb_messages_in_queue; ++i){
-	    msg = &(queue[i]);
-	    agrawala_send_ack(clients[msg->client_id].port);
+	for(i=0; i < nb_messages_in_queue; ++i){
+	    agrawala_send_ack(clients[queue[i]].port);
 	}
     }
 }
