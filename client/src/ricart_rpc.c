@@ -8,12 +8,12 @@
 #include "ricart_rpc.h"
 
 int xdr_request(XDR *xdrp, request_t *p){
-    return (xdr_int(xdrp, &(p->port)) &&
+    return (xdr_u_short(xdrp, &(p->port)) &&
 	    xdr_vector(xdrp, p->name, MAX_NAME_SIZE + 1, sizeof(char), (xdrproc_t) xdr_char));
 }
 
 int xdr_response(XDR *xdrp, response_t *p){
-    return (xdr_int(xdrp, &(p->port)) &&
+    return (xdr_u_short(xdrp, &(p->port)) &&
 	    xdr_int(xdrp, &(p->nb_clients)));
 }
 

@@ -11,16 +11,6 @@
 #define ACK 1
 #define REQ 0 
 
-//! @brief An agrawala message
-typedef struct message{
-    //! @brief the type of the message
-    int type;
-    //! @brief The clock's value when the message is sent
-    int clock;
-    //! @brief The client id
-    short client_id;
-} message_t;
-
 //! @brief Init the agrawala algorithm processor
 //! @param port The port we want to bind the socket on
 void agrawala_init(const int port);
