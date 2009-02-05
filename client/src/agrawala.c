@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include "agrawala.h"
 #include "ricart_rpc.h"
@@ -41,6 +42,8 @@ int clock = 0;
 int client_id = 0;
 //! @brief The tabular that contains the messages received from clients.
 message_t *messages = 0;
+//! @brief The file descriptor set for multiplexing IOs
+fd_set rfsd;
 
 
 // --- Prototypes ------------------------------------------------------------
@@ -112,10 +115,34 @@ void agrawala_close()
 //! @brief The agrawala algorithm main loop
 void agrawala_main_loop()
 {
+    int retval;	// handles the return value from select function
+    char key;	// The key entered on the keyboard
+    char done = 0;	// handles the end of the main loop
+
     agrawala_init_algo();
 
-    agrawala_show_status();
+    while(!done){
+	agrawala_show_status();
 
+	/* Prepare the IO multiplexing system */
+	FD_ZERO(&rfsd);
+	FD_SET(0, &rfsd);	// 0 <-> stdin
+	FD_SET(s_ecoute, &rfsd);
+	/* waits for IOs */	
+	retval = select(s_ecoute + 1, &rfsd, NULL, NULL, NULL);
+
+	if(FD_ISSET(0, &rfsd)){	// 0 <-> stdin
+	    scanf("%c", &key);
+	    printf("stdout : %c\n", key);
+	}
+	else if(FD_ISSET(s_ecoute, &rfsd)){
+	    printf("s_ecoute\n");
+	}
+	else{
+	    printf("else\n");
+	}
+	done = 1;
+    }
     /* Testing */
     agrawala_send_request();
 }
@@ -147,7 +174,7 @@ void agrawala_init_algo()
 void agrawala_show_status()
 {
     int i;	// counter
-    
+
     printf("\nCurrent status at time : %d\n", clock);
     for(i=0; i<nb_clients; ++i){
 	printf("%8s - %5d : %s(%d, %d)\n", clients[i].name, clients[i].port, (messages[i].type == REQ ? "Req": "Ack"), messages[i].clock, messages[i].client_id);
