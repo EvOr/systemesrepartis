@@ -189,6 +189,7 @@ void agrawala_main_loop()
 }
 
 
+//! @brief Executes the correct initializations for the agrawala algorithm
 void agrawala_init_algo()
 {
     message_t msg;	// the default message
@@ -223,6 +224,7 @@ void agrawala_init_algo()
 }
 
 
+//! @brief Prints the last messages received from each client
 void agrawala_show_status()
 {
     int i;	// counter
@@ -234,6 +236,7 @@ void agrawala_show_status()
 }
 
 
+//! @brief Handle the reception of an agrawala message, an determine the action that has to be performed
 void agrawala_handle_packet()
 {
     struct sockaddr_in caller;	// A structure to handle the caller parameters
@@ -292,6 +295,7 @@ void agrawala_handle_packet()
 }
 
 
+//! @brief Sends an agrawala request message
 void agrawala_send_request()
 {
     message_t msg; // The message to send
@@ -311,6 +315,7 @@ void agrawala_send_request()
 }
 
 
+//! @brief Sends an agrawala ack message
 void agrawala_send_ack(short client_id)
 {
     message_t msg; // The message to send
@@ -326,6 +331,7 @@ void agrawala_send_ack(short client_id)
 }
 
 
+//! @brief Enters in critical section if necessary
 void agrawala_enter_critical_section()
 {
     int min_index = 0;	// the message with the minimal clock
@@ -348,6 +354,7 @@ void agrawala_enter_critical_section()
 	}
 	printf("\nLeaving critical section.\n");
 
+	/* Avoid an infinite loop */
 	messages[client_index].type = ACK;
 
 	/* Flushing the message queue */
@@ -358,7 +365,7 @@ void agrawala_enter_critical_section()
 }
 
 
-//! @brief Envoie un message a tout les clients
+//! @brief Broadcasts an agrawala message to each client
 //! @param message Le message à envoyer
 void broadcast(message_t* msg)
 {
@@ -371,9 +378,9 @@ void broadcast(message_t* msg)
 }
 
 
-//! @brief Envoie un message a un client
-//! @param client a qui envoyer
-//! @param message a envoyer
+//! @brief Sends a message to a client
+//! @param client The client to send to
+//! @param message The message that is to be sent
 void send_message(unsigned short client_id, message_t* msg){
     struct sockaddr_in adr;	// The destination
 
