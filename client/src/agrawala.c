@@ -256,8 +256,8 @@ void agrawala_handle_packet()
     if(him->client_id == client_index){
 	/* This message is from ourself, so we are fine and we just check if we can enter the critical section */
 	if(him->type == REQ){
-	    printf("--- Stacking Ack message for client %d\n", him->client_id + 1);
-	    queue[nb_messages_in_queue++] = him->client_id;
+//	    printf("--- Stacking Ack message for client %d\n", him->client_id + 1);
+//	    queue[nb_messages_in_queue++] = him->client_id;
 	}
 	agrawala_enter_critical_section();
     }

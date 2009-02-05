@@ -1,24 +1,24 @@
 \section{Mode d'emploi}
 
-Pour lancer le serveur et les clients, nous avons réalisé deux scripts shell. Le fichier server.sh ressemble à un démon qui l'empêche de se lancer deux fois et permet de le quitter en utilisant les commandes start, stop et restart... De son côté, le fichier client.sh permet de lancer un xterm par client afin d'agir sur ceux-ci.
+Pour lancer le serveur et les clients, nous avons rÃ©alisÃ© deux scripts shell. Le fichier server.sh ressemble Ã  un dÃ©mon qui l'empÃªche de se lancer deux fois et permet de le quitter en utilisant les commandes start, stop et restart... De son cÃ´tÃ©, le fichier client.sh permet de lancer un xterm par client afin d'agir sur ceux-ci.
 
-Evidemment, il est possible de lancer le tout à la main, dans le dossier client, il y a un fichier executable client celui-ci prend deux paramètres :
+Evidemment, il est possible de lancer le tout Ã  la main, dans le dossier client, il y a un fichier executable client celui-ci prend deux paramÃ¨tres :
 \verb|client/client <Nom du client> <port>|. Le serveur lui se lance facilement : \verb|server/server|.
 
-\section{Problèmes rencontrés et solutions}
+\section{ProblÃ¨mes rencontrÃ©s et solutions}
 \subsection{Extinction du serveur}
 
-En revanche, la gestion simplifié des RPC empêchent la terminaison du serveur une fois les trois clients connectés. Il serait évidemment possible pour ceux-ci de signaler qu'ils exécutent l'algorithme de Ricart et Agrawala au serveur pour que celui-ci se termine (à l'aide d'une nouvelle fonction RPC \verb|we_are_all_set| par exemple). Mais une telle méthodologie ne nous plaisait pas, c'est pour ça que nous avons utilisé le signal 2 et construit un démon qui permet de quitter et de relancer le serveur à volonté. La vraie solution, selon nous, serait d'utiliser les méthodes svc beaucoup plus polyvalentes.
+En revanche, la gestion simplifiÃ© des RPC empÃªchent la terminaison du serveur une fois les trois clients connectÃ©s. Il serait Ã©videmment possible pour ceux-ci de signaler qu'ils exÃ©cutent l'algorithme de Ricart et Agrawala au serveur pour que celui-ci se termine (Ã  l'aide d'une nouvelle fonction RPC \verb|we_are_all_set| par exemple). Mais une telle mÃ©thodologie ne nous plaisait pas, c'est pour Ã§a que nous avons utilisÃ© le signal 2 et construit un dÃ©mon qui permet de quitter et de relancer le serveur Ã  volontÃ©. La vraie solution, selon nous, serait d'utiliser les mÃ©thodes svc beaucoup plus polyvalentes.
 
-Lorsque l'on exécute un Ctrl+C pour fermer le serveur se détache de portmap. Nous savions déjà que c'était le signal 2, et pour qu'il libère l'application RPC, nous avons utiliser la fonction signal du C.
+Lorsque l'on exÃ©cute un Ctrl+C pour fermer le serveur se dÃ©tache de portmap. Nous savions dÃ©jÃ  que c'Ã©tait le signal 2, et pour qu'il libÃ¨re l'application RPC, nous avons utiliser la fonction signal du C.
 
 \subsection{select}
 
-Afin de gérer de manière homogène l'arrivée des commandes que ce soit par la console ou par le socket UDP. Nous avons dû apprendre à utiliser la fonction \verb|select| de \verb|unistd.h|, qui permet de multiplexer les entrées/sorties, c'est à dire d'être à l'écoute à la fois sur le clavier et sur le socket UDP.
+Afin de gÃ©rer de maniÃ¨re homogÃ¨ne l'arrivÃ©e des commandes que ce soit par la console ou par le socket UDP. Nous avons dÃ» apprendre Ã  utiliser la fonction \verb|select| de \verb|unistd.h|, qui permet de multiplexer les entrÃ©es/sorties, c'est Ã  dire d'Ãªtre Ã  l'Ã©coute Ã  la fois sur le clavier et sur le socket UDP.
 
 \subsection{Ce n'est pas de l'objet}
 
-De manière un peu moins technique, nous avons éprouvé quelques difficultés à revenir au C après avoir fait du Java ou du C++ voir du python durant nos stages et projets à l'ISIMA. Néanmoins, ce retour aux sources nous a permis d'apprécier une nouvelle fois la toute puissance de Vim (complétion du code, syntaxe, gestion des fenêtres, des onglets, auto-indentation) et d'exploiter pleinement le potentiel de git (gestionnaire de source distribué).
+De maniÃ¨re un peu moins technique, nous avons Ã©prouvÃ© quelques difficultÃ©s Ã  revenir au C aprÃ¨s avoir fait du Java ou du C++ voir du python durant nos stages et projets Ã  l'ISIMA. NÃ©anmoins, ce retour aux sources nous a permis d'apprÃ©cier une nouvelle fois la toute puissance de Vim (complÃ©tion du code, syntaxe, gestion des fenÃªtres, des onglets, auto-indentation) et d'exploiter pleinement le potentiel de git (gestionnaire de source distribuÃ©).
 
 \section{Un Cas d'utilisation}
 
