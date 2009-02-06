@@ -22,4 +22,71 @@ L'écriture de ce programme a été l'occasion de découvrir la fonction \verb|s
 De manière un peu moins technique (et un peu plus philosophique...), nous avons éprouvé quelques difficultés à revenir au C après avoir fait du Java ou du C++ voir du Python durant nos stages et projets à l'ISIMA. Néanmoins, ce retour aux sources nous a permis d'apprécier une nouvelle fois la toute puissance de Vim (complétion du code, syntaxe, gestion des fenêtres, des onglets, auto-indentation) et d'exploiter pleinement le potentiel de git (système de gestion de version distribué).
 
 \section{Un Cas d'utilisation}
+Nous avons testé notre application dans le cadre ou chacun des trois clients effectue une requete dès le lancement. En d'autre terme, sur chacun des xterms la commande e a été appelé du Client 1 au Client3.
 
+Ci-dessous la trace de chacun des client, suivi du graphique ``Callflow'' des lancements 
+\paragraph{Client 1 : \\}
+
+        \begin{minipage}{0.90\textwidth}
+                \begin{lstlisting}
++++ Broadcasted message : Req(1, 1)
+--- Received message : Req(1, 1)
+--- Received message : Ack(3, 2)
+--- Received message : Ack(3, 3)
+Entering critical section.
+..........
+Leaving critical section.
+--- Received message : Req(4, 2)
++++ Sent message : Ack(7, 1)
+--- Received message : Req(7, 3)
++++ Sent message : Ack(9, 1)
+                \end{lstlisting}
+        \end{minipage}
+
+
+\paragraph{Client 2 :\\}
+
+        \begin{minipage}{0.90\textwidth}
+                \begin{lstlisting}
+
+--- Received message : Req(1, 1)
++++ Sent message : Ack(3, 2)
+e
++++ Broadcasted message : Req(4, 2)
+--- Received message : Req(4, 2)
+--- Received message : Ack(6, 3)
+--- Received message : Req(7, 3)
+--- Stacking Ack message for client 3
+--- Received message : Ack(7, 1)
+Entering critical section.
+..........
+Leaving critical section.
++++ Sent message : Ack(10, 2)
+\end{lstlisting}
+        \end{minipage}
+
+\paragraph{Client 3 :\\ }
+
+        \begin{minipage}{0.90\textwidth}
+                \begin{lstlisting}
+--- Received message : Req(1, 1)
++++ Sent message : Ack(3, 3)
+--- Received message : Req(4, 2)
++++ Sent message : Ack(6, 3)
+e
++++ Broadcasted message : Req(7, 3)
+--- Received message : Req(7, 3)
+--- Received message : Ack(9, 1)
+--- Received message : Ack(10, 2)
+Entering critical section.
+..........
+Leaving critical section.
+
+\end{lstlisting}
+        \end{minipage}
+\begin{center}
+\begin{figure}[H]
+	\includegraphics[width=\textwidth]{images/casUtil.png}
+\caption{CallFlow de l'éxecution du cas d'utilisation}
+\end{figure}
+\end{center}
