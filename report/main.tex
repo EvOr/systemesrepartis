@@ -1,0 +1,97 @@
+\documentclass[12pt, a4paper, titlepage, oneside]{article}
+
+% On commence par enjoliver
+\usepackage[francais]{babel}	%typographie franÃ§aise
+\usepackage[latin1]{inputenc}	% accents 8 bits dans le source
+\usepackage[T1]{fontenc}	% accents dans le DVI
+\usepackage{lmodern}	% Sans cette ligne la typo va Ãªtre merdique!!!
+\usepackage[usenames,dvipsnames]{color}
+%\usepackage{nicebox}
+% on inclue de l'utilitaire
+\usepackage{float}
+\usepackage{graphicx}
+
+\newcommand{\Hrule}{\rule{\linewidth}{0.5mm}}
+
+%On va se faire de belles marges
+\usepackage{vmargin}
+\setmarginsrb{1.5cm}{1.5cm}{1.5cm}{1.5cm}{15.71402pt}{1.5cm}{0.5cm}{1.5cm}
+
+% de jolis headers/footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\fancyhead{} % clear all header fields
+\fancyhead[L]{Implémentation de l'algorythme de Ricart et Agrawala}
+\fancyhead[R]{\rightmark}
+\fancyfoot{} % clear all footer fields
+\fancyfoot[C]{\thepage}
+
+%Gui : problème du absence conférence
+%Gui : 
+
+\begin{document}
+	% on commence par la page de garde
+	\input{titre.tex}
+	%\input{resume.tex}
+	%\input{remerciements.tex}	
+	% puis vient la table des matiÃ¨res
+	%\pagenumbering{roman}
+%	\listoffigures
+%\pagebreak
+ %	\tableofcontents
+%	\pagebreak
+%\fancyhead[R]{Lexique}
+	%\input{Lexique.tex}
+ %	\pagebreak
+        
+	%\fancyhead[R]{Introduction}
+	%\input{intro.tex}
+	\pagebreak 	
+% 	% puis la page d'intro
+\fancyhead[L]{Systemes Repartis}
+\fancyhead[R]{\rightmark}
+	
+% 	\fancyhead{}
+% 	\fancyhead[R]{Rapport de Design Ã‰lectronique}
+% 	\input{./intro.tex}
+% 	\pagebreak
+	\input{partie1.tex}
+%\pagebreak
+%\input{partie2.tex}
+%\pagebreak
+%\input{partie3.tex}
+%\pagebreak
+%\fancyhead[R]{Conclusion}
+	%\input{./conclusion.tex}
+%\pagebreak
+%\fancyhead[R]{Bibliographie}
+%\input{./biblio.tex}
+	% et enfin le contenu	
+	\fancyhead{}
+	\fancyhead[R]{\rightmark}
+	\pagenumbering{arabic}
+	
+	
+\pagebreak
+
+\vfill
+	
+\vfill
+\pagebreak
+	
+%	\input{biblio.tex}
+\end{document}
+
+%\usepackage{geometry}
+%\geometry{hmargin=1.5cm, vmargin=1.5cm}
+
+%\geometry{scale=0.8, nohead}
+
+%\newenvironment{changemargin}[0]{\begin{list}{}{
+	%\setmarginsrb{1.5cm}{1.5cm}{1.5cm}{1.5cm}{2.84cm}{2cm}{2.84cm}{2cm}
+%}\item }{\end{list}}
+%Idée de développement partir de Blancarde, pour arrivée à l'IVPico, ou l'inverse à voir. A l'oral ce serait certainement mieux, tellement Blancarde version installation est simple pa
+r rapport à l'autre.
