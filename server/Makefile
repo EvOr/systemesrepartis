@@ -5,7 +5,7 @@
 
 VERSION = DEBUG
 
-TGT = server
+TGT = serverRPC
 SRC = main.c ricart_rpc.c
 
 SRCDIR = ./src

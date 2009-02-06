@@ -4,6 +4,8 @@ Pour lancer le serveur et les clients, nous avons réalisé deux scripts shell. 
 
 Evidemment, il est possible de lancer le tout à la main. Auquel cas la syntaxe de lancement du client est la suivante : \verb|client/client <Nom du client> <port>|. Le serveur quand à lui n'attend pas de paramètres sur la ligne de commande et se lance par : \verb|server/server|.
 
+Pour compiler le tp tapez simplement make dans le dossier client pour le client, et dans le dossier server pour le server. La doc pour chaque projet a été générée pour doxygen et est disponible via \verb|doc/html/index.html| dans le dossier client pour le client, et dans le dossier server pour le server.
+
 \section{Problèmes rencontrés et solutions}
 \subsection{Terminaison du serveur}
 
@@ -22,9 +24,9 @@ L'écriture de ce programme a été l'occasion de découvrir la fonction \verb|s
 De manière un peu moins technique (et un peu plus philosophique...), nous avons éprouvé quelques difficultés à revenir au C après avoir fait du Java ou du C++ voir du Python durant nos stages et projets à l'ISIMA. Néanmoins, ce retour aux sources nous a permis d'apprécier une nouvelle fois la toute puissance de Vim (complétion du code, syntaxe, gestion des fenêtres, des onglets, auto-indentation) et d'exploiter pleinement le potentiel de git (système de gestion de version distribué).
 
 \section{Un Cas d'utilisation}
-Nous avons testé notre application dans le cadre ou chacun des trois clients effectue une requete dès le lancement. En d'autre terme, sur chacun des xterms la commande e a été appelé du Client 1 au Client3.
 
-Ci-dessous la trace de chacun des client, suivi du graphique ``Callflow'' des lancements 
+La section qui suit présente les communications mises en jeu lors du cas simple où les clients demandent tour à tour leur entrée en section critique, du premier au dernier. Voici tout d'abord la trace fournie par chaque client, puis le graphique correspondant. La correspondance entre les deux prouve que les horloges sont correctement gérées.
+
 \paragraph{Client 1 : \\}
 
         \begin{minipage}{0.90\textwidth}
